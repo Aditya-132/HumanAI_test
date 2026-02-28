@@ -32,7 +32,7 @@ Parameters used:
 
 Below are sample infected trajectories from multiple stochastic simulations.
 
-![Stochastic Trajectories](images/stochastic_trajectories.png)
+![Stochastic Trajectories](stochastic_trajectories.png)
 
 These trajectories fluctuate due to randomness but converge in expectation.
 

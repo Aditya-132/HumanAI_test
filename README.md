@@ -2,119 +2,124 @@
 
 ## Overview
 
-This project demonstrates how machine learning and symbolic regression can recover the deterministic **Susceptible–Infected–Removed (SIR)** model from stochastic epidemic simulations.
+This project demonstrates how machine learning and symbolic regression can recover the deterministic **SIR (Susceptible–Infected–Recovered)** model from stochastic epidemic simulations.
 
 Pipeline:
 
-1. Simulate many stochastic SIR epidemics using the Gillespie algorithm  
-2. Compute the mean epidemic trajectory  
-3. Train a neural network to learn the mean dynamics  
-4. Use sparse symbolic regression (SINDy) to rediscover the governing ODEs  
-5. Extract epidemiological parameters β and γ  
-
-The recovered equations closely match the true deterministic SIR model.
+1. Simulate stochastic epidemics (Gillespie algorithm)
+2. Compute mean epidemic trajectory
+3. Train neural network on mean dynamics
+4. Apply sparse symbolic regression (SINDy)
+5. Recover interpretable governing equations
 
 ---
 
-## True Deterministic SIR Model
-
-The classical SIR model is:
+# True Deterministic Model
 
 dS/dt = -β S I  
 dI/dt = β S I - γ I  
 
-Where:
-
-- β = infection rate  
-- γ = recovery rate  
-
-In this experiment:
+Parameters used:
 
 - β = 0.3  
 - γ = 0.1  
 
 ---
 
-## Results
+# Results
 
-### Neural Network Performance
+## 1️⃣ Stochastic Epidemic Trajectories
+
+Below are sample infected trajectories from multiple stochastic simulations.
+
+![Stochastic Trajectories](images/stochastic_trajectories.png)
+
+These trajectories fluctuate due to randomness but converge in expectation.
+
+---
+
+## 2️⃣ Mean Epidemic Curve
+
+Mean S and I curves computed over multiple simulations.
+
+![Mean Epidemic Curve](images/mean_trajectory.png)
+
+The mean behavior approaches deterministic SIR dynamics.
+
+---
+
+## 3️⃣ Neural Network Prediction vs True Mean
+
+Neural network learned the mapping:
+
+(S(t), I(t)) → (S(t+1), I(t+1))
 
 ML Mean Squared Error:
 
 ML MSE: 0.001893
 
-This shows the neural network successfully learned the mean epidemic trajectory.
+![NN Prediction](images/nn_prediction.png)
+
+The neural network closely matches the true mean epidemic curve.
 
 ---
 
-### Recovered Symbolic Model
+## 4️⃣ Recovered Symbolic Model vs True Model
 
 Recovered equations:
 
 S = -0.294 S I  
 I = -0.098 I + 0.289 S I  
 
-Recovered parameters:
+Estimated parameters:
 
-Estimated beta  = 0.2937  
-Estimated gamma = 0.0977  
+- β ≈ 0.2937  
+- γ ≈ 0.0977  
 
-Parameter comparison:
+Parameter error ≈ 2%
 
-| Parameter | True | Recovered | Error |
-|-----------|------|-----------|-------|
-| β         | 0.300 | 0.2937 | ~2% |
-| γ         | 0.100 | 0.0977 | ~2% |
+![Symbolic vs True](images/symbolic_vs_true.png)
 
-The deterministic SIR model is successfully recovered from purely stochastic simulations.
+The symbolic model overlaps almost perfectly with the true mean trajectory.
 
 ---
 
-## Generated Visualizations
+## 5️⃣ Sparse Regression Coefficients
 
-The script produces:
+Sparse regression selects only the physically meaningful terms.
 
-- Sample stochastic infected trajectories  
-- Mean epidemic curves (S and I)  
-- Neural network prediction vs true mean  
-- Symbolic model simulation vs true mean  
-- Sparse regression coefficient visualization  
+![Coefficient Plot](images/coefficients.png)
 
-These confirm:
+Non-zero terms correspond exactly to:
 
-- Convergence of stochastic simulations to deterministic behavior  
-- Accurate ML learning  
-- Sparse recovery of governing equations  
+- S·I term in dS/dt  
+- S·I term in dI/dt  
+- I term in dI/dt  
 
 ---
 
-## Methodology
+# Methodology
 
-### 1. Stochastic Simulation
+## Stochastic Simulation
+- Gillespie algorithm
+- 300–500 runs
+- Interpolated to common time grid
+- Mean trajectory computed
 
-- Gillespie algorithm  
-- 300–500 independent epidemic realizations  
-- Interpolation onto a common time grid  
-- Averaging to compute mean dynamics  
+## Machine Learning
+- MLPRegressor
+- Two hidden layers
+- Supervised learning on time-shifted states
 
-### 2. Machine Learning
-
-- MLPRegressor (2 hidden layers)  
-- Learns mapping:  
-  (S(t), I(t)) → (S(t+1), I(t+1))  
-
-### 3. Symbolic Regression
-
-- Derivatives computed via Savitzky–Golay smoothing  
-- Polynomial feature library (degree 2)  
-- Sparse regression (STLSQ thresholding)  
-- Enforced sparsity to obtain interpretable equations  
+## Symbolic Regression
+- Savitzky–Golay smoothing for derivatives
+- Polynomial feature library (degree 2)
+- STLSQ sparse regression
+- Thresholding for interpretability
 
 ---
 
-## Dependencies
-
-Install required packages:
+# Dependencies
 
 ```bash
 pip install numpy matplotlib scikit-learn scipy pysindy

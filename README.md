@@ -42,7 +42,7 @@ These trajectories fluctuate due to randomness but converge in expectation.
 
 Mean S and I curves computed over multiple simulations.
 
-![Mean Epidemic Curve](images/mean_trajectory.png)
+![Mean Epidemic Curve](mean_trajectory.png)
 
 The mean behavior approaches deterministic SIR dynamics.
 
@@ -58,7 +58,7 @@ ML Mean Squared Error:
 
 ML MSE: 0.001893
 
-![NN Prediction](images/nn_prediction.png)
+![NN Prediction](nn_prediction.png)
 
 The neural network closely matches the true mean epidemic curve.
 
@@ -78,25 +78,12 @@ Estimated parameters:
 
 Parameter error ≈ 2%
 
-![Symbolic vs True](images/symbolic_vs_true.png)
+![Symbolic vs True](symbolic_vs_true.png)
 
 The symbolic model overlaps almost perfectly with the true mean trajectory.
 
 ---
 
-## 5️⃣ Sparse Regression Coefficients
-
-Sparse regression selects only the physically meaningful terms.
-
-![Coefficient Plot](images/coefficients.png)
-
-Non-zero terms correspond exactly to:
-
-- S·I term in dS/dt  
-- S·I term in dI/dt  
-- I term in dI/dt  
-
----
 
 # Methodology
 
